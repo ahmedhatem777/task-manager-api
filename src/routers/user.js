@@ -149,27 +149,3 @@ router.delete('/users/me',auth, async (req, res) => {
 
 module.exports = router;
 
-//Finding a user
-// router.get('/users/:id', async (req, res) => {
-//     const _id = req.params.id;
-
-//     try {
-//         const user = await User.findById(_id);
-//         res.status(200).send(user);
-//     }
-//     catch(err){
-//         res.status(404).send('User not found!');
-//     }
-
-// })
-
-//Finding all users
-// router.get('/users', auth, async (req, res) => {
-//     try {
-//         const users = await User.find({});
-//         res.status(200).send(users);
-//     }
-//     catch(err){
-//         res.status(500).send(err);
-//     }
-// })
