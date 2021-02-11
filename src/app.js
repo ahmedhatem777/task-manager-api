@@ -6,7 +6,11 @@ require('./db/mongoose');
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    credentials: true,
+    origin: 'http://example.com',
+}
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);

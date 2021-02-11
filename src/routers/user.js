@@ -1,10 +1,12 @@
 const express = require('express');
-const router = new express.Router();
+var cookie = require('cookie');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
-const {sendWelcomeEmail, sendCancelationEmail} = require('../emails/account')
+// const {sendWelcomeEmail, sendCancelationEmail} = require('../emails/account')
 const sharp =  require('sharp');
 const multer = require('multer');
+
+//Avatar options
 const upload = multer({
     limits: {
         fileSize: 1000000
@@ -19,15 +21,25 @@ const upload = multer({
     }
 })
 
+const router = new express.Router();
+
 //Creating a user
 router.post('/users', async (req, res) => {
     const user = new User(req.body);
 
     try {
         await user.save();
-        sendWelcomeEmail(user.email, user.name);
+        //sendWelcomeEmail(user.email, user.name);
         const token = await user.generateToken();
-        res.status(201).send({user, token});
+        res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
+            httpOnly: true,
+            path: "/",
+            sameSite: 'lax'
+            // Set true for https only
+            // secure: true
+        }));
+        res.status(201);
+        res.send({user});
     }
     catch(err){
         res.status(400).send(err);
@@ -42,7 +54,13 @@ router.post('/users/login', async (req, res) => {
     try{
         const user = await User.findByCredentials(email, password);
         const token = await user.generateToken();
-        res.send({user, token});
+        res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
+            httpOnly: true,
+            path: "/",
+            // Set true for "https" only
+            // secure: true
+        }));
+        res.send({user});
     }
     catch(err){
         res.status(400).send('Login failed!')
@@ -52,12 +70,21 @@ router.post('/users/login', async (req, res) => {
 //User logging out
 router.post('/users/logout', auth, async (req, res) => {
     try{
+        const cookies = cookie.parse(req.headers.cookie);
+        const userToken = cookies.jot;
         req.user.tokens = req.user.tokens.filter( (token) => {
-            return token.token !== req.token
+            return token.token !== userToken;
         })
+
         await req.user.save();
 
-        res.send('Logout Successfully!')
+        res.setHeader('Set-Cookie', cookie.serialize('jot', 'buhbye', {
+            httpOnly: true,
+            path: "/",
+            maxAge: 1 // 1 second
+        }))
+
+        res.send('Logout Successfully!');
     }
     catch(err){
         res.status(500).send('Logout failed!')
@@ -67,8 +94,14 @@ router.post('/users/logout', auth, async (req, res) => {
 //User Logging out of all devices "deleting all tokens"
 router.post('/users/logoutAll', auth, async (req, res) => {
     try{
-        req.user.tokens = []
+        req.user.tokens = [];
         await req.user.save();
+
+        res.setHeader('Set-Cookie', cookie.serialize('jot', 'buhbye', {
+            httpOnly: true,
+            path: "/",
+            maxAge: 1 // 1 second
+        }))
 
         res.send('Logged out of all devices!')
     }
@@ -139,7 +172,7 @@ router.patch('/users/:id', auth, async (req, res) => {
 router.delete('/users/me',auth, async (req, res) => {
     try{
         await req.user.remove()
-        sendCancelationEmail(req.user.email, req.user.name)
+        // sendCancelationEmail(req.user.email, req.user.name)
         res.send(req.user);
     }
     catch(err){
