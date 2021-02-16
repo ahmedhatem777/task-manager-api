@@ -57,8 +57,7 @@ router.post('/users/login', async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
             httpOnly: true,
             path: "/",
-            sameSite: "lax",
-            domain: null
+            sameSite: "lax"
             // Set true for "https" only
             // secure: true
         }));
