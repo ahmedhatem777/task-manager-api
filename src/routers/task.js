@@ -17,7 +17,7 @@ router.post('/tasks', auth, async (req, res) => {
   
     }
     catch(err){
-        res.status(400).send(err);
+        res.status(400).send('Something went wrong, please try again!');
     }
 })
 
@@ -51,10 +51,10 @@ router.get('/tasks', auth, async (req, res) => {
         })
         .execPopulate();
 
-        res.status(200).send(user.tasks)
+        res.status(200).send(user.tasks);
     }
     catch(err){
-        res.status(500).send(err)
+        res.status(500).send(err);
     }
 })
 
@@ -94,7 +94,7 @@ router.patch('/tasks/:id', auth, async (req, res) => {
         res.send(task);
     }
     catch(err){
-        res.status(400).send('Task not found!');
+        res.status(400).send('Something went wrong, please try again!');
     }
 })
 

@@ -4,16 +4,17 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Task = require('./task');
 
-
 const userSchema = new mongoose.Schema({
     name: { 
         type: String,
         required: true,
+        maxLength: 64,
         trim: true
     },
     age: {
         type: Number,
         default: 0,
+        max: 123,
         validate(value) {
             if(value < 0) {
                 throw new Error('Age must be a positive number!');
@@ -26,6 +27,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
         lowercase: true,
+        maxLength: 254,
         validate(value){
             if(!validator.isEmail(value)){
                 throw new Error('Incorrect Email!')
@@ -37,6 +39,7 @@ const userSchema = new mongoose.Schema({
         required:true,
         trim: true,
         minlength: 7,
+        maxLength: 64,
         validate(value){
             if(value.includes('password')){
                 throw new Error('Password can not contain the word password!.')

@@ -34,7 +34,7 @@ router.post('/users', async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
             httpOnly: true,
             path: "/",
-            sameSite: "lax",
+            sameSite: "lax"
             // Set true for https only
             // secure: true
         }));
@@ -42,7 +42,15 @@ router.post('/users', async (req, res) => {
         res.send({user});
     }
     catch(err){
-        res.status(400).send(err);
+        if(err.code === 11000) {
+            res.status(400).send('Email already registered!');
+        }
+        else if( err.errors.password ) {
+            res.status(400).send('Invalid password length!');
+        }
+        else {
+            res.status(400).send('Something went wrong, please try again!');
+        }
     }
 
 })
@@ -126,11 +134,15 @@ router.get('/users/me', auth, async (req, res) => {
 //Uploading user avatar
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
     user = req.user;
-    uploadedAvatar = req.file.buffer;
-    avatar = await sharp(uploadedAvatar).resize({width:200, height:200}).png().toBuffer();
-    user.avatar = avatar;
-    await user.save();
-    res.send('Uploaded successfully!')
+    try {
+        uploadedAvatar = req.file.buffer;
+        avatar = await sharp(uploadedAvatar).resize({ width: 200, height: 200 }).png().toBuffer();
+        user.avatar = avatar;
+        await user.save();
+        res.send('Uploaded successfully!')
+    }
+    catch(e){ console.log(e) };
+    
 }, (err, req, res, next) => res.status(400).send({error: err.message}))
 
 //Deleting user avatar
@@ -170,9 +182,7 @@ router.patch('/users/:id', auth, async (req, res) => {
         res.send(user);
     }
     catch(err){
-        console.log(err);
-        res.status(400).send(err);
-        
+        res.status(400).send('Something went wrong, please try again!');
     }
 })
 
