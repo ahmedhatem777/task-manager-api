@@ -12,7 +12,7 @@ const upload = multer({
         fileSize: 1000000
     },
     fileFilter(req, file, cb) {
-        if(file.originalname.match(/\.(jpg|jpeg|png)$/)){
+        if(file.originalname.match(/\.(jpg|jpeg|png|JPG|JPEG|PNG)$/)){
             cb(undefined, true);
         }
         else{
@@ -64,7 +64,7 @@ router.post('/users/login', async (req, res) => {
         res.send({user});
     }
     catch(err){
-        res.status(400).send('Login failed!')
+        res.status(400).send(err.message)
     }
 })
 
@@ -113,14 +113,21 @@ router.post('/users/logoutAll', auth, async (req, res) => {
 
 //Showing User profile
 router.get('/users/me', auth, async (req, res) => {
-    res.send(req.user);
+    const user = req.user;
+    if(user.avatar){
+        res.send({...req.user, hasAvatar: true});
+    }
+    else {
+        res.send({ ...req.user, hasAvatar: false });
+    }
+    
 })
 
 //Uploading user avatar
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
     user = req.user;
     uploadedAvatar = req.file.buffer;
-    avatar = await sharp(uploadedAvatar).resize({width:250, height:250}).png().toBuffer();
+    avatar = await sharp(uploadedAvatar).resize({width:200, height:200}).png().toBuffer();
     user.avatar = avatar;
     await user.save();
     res.send('Uploaded successfully!')
@@ -135,11 +142,11 @@ router.delete('/users/me/avatar', auth, async (req, res) => {
 })
 
 //Showing a user's avatar
-router.get('/users/:id/avatar', async (req, res) => {
+router.get('/users/me/avatar', auth ,async (req, res) => {
     try{
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.user._id);
         if(!user || !user.avatar){
-            throw new Error('User/Image not found!')
+            throw new Error('No avatar was uploaded :(')
         }
         res.set('Content-Type', 'image/png');
         res.send(user.avatar);

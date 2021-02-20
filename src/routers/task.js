@@ -2,7 +2,6 @@ const express = require('express');
 const router = new express.Router();
 const Task = require('../models/task');
 const auth = require('../middleware/auth');
-const User = require('../models/user');
 
 //Creating a new task
 router.post('/tasks', auth, async (req, res) => {
@@ -80,7 +79,7 @@ router.patch('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id;
     const owner = req.user._id;
     const updates = Object.keys(req.body);
-    const allowedUpdates = ["description", "completed"];
+    const allowedUpdates = ["title", "description", "completed"];
     const isValidOperation = updates.every( (update) => allowedUpdates.includes(update) )
 
     if(!isValidOperation) return res.status(400).send('Invalid updates!');
