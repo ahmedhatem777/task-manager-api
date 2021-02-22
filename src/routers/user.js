@@ -72,7 +72,17 @@ router.post('/users/login', async (req, res) => {
         res.send({user});
     }
     catch(err){
-        res.status(400).send(err.message)
+        res.status(400).send(err.message);
+    }
+})
+
+//Loggin in with cookie
+router.get('/users/cookie', auth, async (req, res) => {
+    try {
+        res.status(200).send('Still Logged In');
+    }
+    catch(err){
+        res.status(401).send(err.message);
     }
 })
 
