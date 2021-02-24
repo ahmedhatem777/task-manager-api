@@ -34,9 +34,9 @@ router.post('/users', async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
             httpOnly: true,
             path: "/",
-            sameSite: "lax"
+            sameSite: "lax",
             // Set true for https only
-            // secure: true
+            secure: true
         }));
         res.status(201);
         res.send({user});
@@ -65,9 +65,9 @@ router.post('/users/login', async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
             httpOnly: true,
             path: "/",
-            sameSite: "lax"
+            sameSite: "lax",
             // Set true for "https" only
-            // secure: true
+            secure: true
         }));
         res.send({user});
     }
