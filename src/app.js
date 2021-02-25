@@ -8,7 +8,7 @@ const app = express();
 
 const corsOptions = {
     credentials: true,
-    origin: 'https://tt.ahmed-hatem.com/'
+    origin: 'https://tt.ahmed-hatem.com'
 }
 
 app.use(cors(corsOptions)); 
