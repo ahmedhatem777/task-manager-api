@@ -1,4 +1,4 @@
-const app = require('./app')
+const app = require('./src/app')
 const port = process.env.PORT;
 
 //Divided the express server file, so that it doesn't run while testing with Jest
