@@ -8,15 +8,13 @@ const multer = require('multer');
 
 //Avatar options
 const upload = multer({
-    limits: {
-        fileSize: 1000000
-    },
     fileFilter(req, file, cb) {
+        if (file.size > 1000000) cb(new Error('FILE TOO LARGE: 1MB SIZE LIMIT!'));
         if(file.originalname.match(/\.(jpg|jpeg|png|JPG|JPEG|PNG)$/)){
             cb(undefined, true);
         }
         else{
-            cb(new Error('Unsupported file type!'));
+            cb(new Error('UNSUPPORTED FILE TYPE!'));
         }
     }
 })
@@ -36,8 +34,8 @@ router.post('/users', async (req, res) => {
             path: "/",
             sameSite: "lax",
             // Set true for https only
-            secure: true
-        }));
+            // secure: true
+        }))
         res.status(201);
         res.send({user});
     }
@@ -67,7 +65,7 @@ router.post('/users/login', async (req, res) => {
             path: "/",
             sameSite: "lax",
             // Set true for "https" only
-            secure: true
+            // secure: true
         }));
         res.send({user});
     }
@@ -149,7 +147,7 @@ router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) 
         avatar = await sharp(uploadedAvatar).resize({ width: 200, height: 200 }).png().toBuffer();
         user.avatar = avatar;
         await user.save();
-        res.send('Uploaded successfully!')
+        res.send('UPLOADED SUCCESSFULLY!')
     }
     catch(e){ console.log(e) };
     
