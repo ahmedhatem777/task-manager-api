@@ -8,8 +8,11 @@ const multer = require('multer');
 
 //Avatar options
 const upload = multer({
+    limits: {
+        fileSize: 1000000  
+    },
     fileFilter(req, file, cb) {
-        if (file.size > 1000000) cb(new Error('FILE TOO LARGE: 1MB SIZE LIMIT!'));
+        // if (file.size > 1000000) cb(new Error('FILE TOO LARGE: 1MB SIZE LIMIT!'));
         if(file.originalname.match(/\.(jpg|jpeg|png|JPG|JPEG|PNG)$/)){
             cb(undefined, true);
         }
@@ -151,7 +154,19 @@ router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) 
     }
     catch(e){ console.log(e) };
     
-}, (err, req, res, next) => res.status(400).send({error: err.message}))
+}, (err, req, res, next) => { 
+        if (err instanceof multer.MulterError && err.message === "File too large" ) {
+            res.status(400).send('FILE TOO LARGE! 1MB SIZE LIMIT.');
+        }
+        else {
+            if(err.message) {
+                res.status(400).send(err.message);
+            }
+            else{
+                res.status(400).send('SOMETHING WENT WRONG, TRY AGAIN!');
+            }
+        }
+    })
 
 //Deleting user avatar
 router.delete('/users/me/avatar', auth, async (req, res) => {
