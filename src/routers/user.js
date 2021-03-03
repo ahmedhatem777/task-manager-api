@@ -2,11 +2,11 @@ const express = require('express');
 var cookie = require('cookie');
 const User = require('../models/user');
 const auth = require('../middleware/auth');
-// const {sendWelcomeEmail, sendCancelationEmail} = require('../emails/account')
 const sharp =  require('sharp');
 const multer = require('multer');
+// const {sendWelcomeEmail, sendCancelationEmail} = require('../emails/account');
 
-//Avatar options
+// Avatar options
 const upload = multer({
     limits: {
         fileSize: 1000000  
@@ -24,7 +24,7 @@ const upload = multer({
 
 const router = new express.Router();
 
-//Creating a user
+// Creating a user
 router.post('/users', async (req, res) => {
     const user = new User(req.body);
 
@@ -56,7 +56,7 @@ router.post('/users', async (req, res) => {
 
 })
 
-//Logging in a user
+// Logging in a user
 router.post('/users/login', async (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
@@ -77,7 +77,7 @@ router.post('/users/login', async (req, res) => {
     }
 })
 
-//Loggin in with cookie
+// Loggin in with cookie
 router.get('/users/cookie', auth, async (req, res) => {
     try {
         res.status(200).send('Still Logged In');
@@ -87,7 +87,7 @@ router.get('/users/cookie', auth, async (req, res) => {
     }
 })
 
-//User logging out
+// User logging out
 router.post('/users/logout', auth, async (req, res) => {
     try{
         const cookies = cookie.parse(req.headers.cookie);
@@ -111,7 +111,7 @@ router.post('/users/logout', auth, async (req, res) => {
     }
 })
 
-//User Logging out of all devices "deleting all tokens"
+// User Logging out of all devices "deleting all tokens"
 router.post('/users/logoutAll', auth, async (req, res) => {
     try{
         req.user.tokens = [];
@@ -130,7 +130,7 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     }
 })
 
-//Showing User profile
+// Showing User profile
 router.get('/users/me', auth, async (req, res) => {
     const user = req.user;
     if(user.avatar){
@@ -142,7 +142,7 @@ router.get('/users/me', auth, async (req, res) => {
     
 })
 
-//Uploading user avatar
+// Uploading user avatar
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
     user = req.user;
     try {
@@ -168,7 +168,7 @@ router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) 
         }
     })
 
-//Deleting user avatar
+// Deleting user avatar
 router.delete('/users/me/avatar', auth, async (req, res) => {
     user = req.user;
     user.avatar = undefined;
@@ -176,7 +176,7 @@ router.delete('/users/me/avatar', auth, async (req, res) => {
     res.send('Avatar deleted!');
 })
 
-//Showing a user's avatar
+// Showing a user's avatar
 router.get('/users/me/avatar', auth ,async (req, res) => {
     try{
         const user = await User.findById(req.user._id);
@@ -191,7 +191,7 @@ router.get('/users/me/avatar', auth ,async (req, res) => {
     }
 })
 
-//Updating a user
+// Updating a user
 router.patch('/users/:id', auth, async (req, res) => {
     const user = req.user;
     const updates = Object.keys(req.body);
@@ -209,7 +209,7 @@ router.patch('/users/:id', auth, async (req, res) => {
     }
 })
 
-//Deleting a user
+// Deleting a user
 router.delete('/users/me',auth, async (req, res) => {
     try{
         await req.user.remove()

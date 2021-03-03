@@ -61,18 +61,18 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 })
 
-//This adds a virtual field/property to the model, it is not stored in the db, it is used to establish the relation between this collection and
-//the task collection, where it'll use the user id to establish that.
+// A virtual field/property to the model, not stored in the db, used to establish the relation between this collection and
+// the task collection, where it'll use the user id to establish that.
 userSchema.virtual('tasks', {
     ref: 'Task',
     localField: '_id',
     foreignField: 'owner'
 })
 
-//A mongoose middleware function, which runs using the user instance itself, hence it is not an arrow function.
-//Here it turns the user instance it ran on to a userObject, and then it uses the delete operator to delete the fields that should be hidden.
-//Naming the function to '.toJSON' and adding our operations does the same without having to call the function explicitly
-//, since express call the function behind the scenes.
+// A mongoose middleware function, which runs using the user instance itself, hence it is not an arrow function.
+// Here it turns the user instance it ran on to a userObject, and then it uses the delete operator to delete the fields that should be hidden.
+// Naming the function to '.toJSON' and adding our operations does the same without having to call the function explicitly,
+// since express calls the function behind the scenes.
 userSchema.methods.toJSON = function() {
     const user = this;
     const userObject = user.toObject();
@@ -81,9 +81,11 @@ userSchema.methods.toJSON = function() {
     delete userObject.tokens;
     delete userObject.avatar;
 
-    return userObject
+    return userObject;
 }
 
+
+// Generating the session token using JWT
 userSchema.methods.generateToken = async function() {
     const user = this;
     const userID = user._id.toString();
@@ -93,9 +95,9 @@ userSchema.methods.generateToken = async function() {
     return token;
 }
 
-//A mongoose middleware function, which runs using the User model.
-//In this function it is used to authenticate a user, where it checks if the given credentials are valid or not
-//it is used by the login route in the userRouter.
+// A mongoose middleware function, which runs using the User model.
+// In this function it is used to authenticate a user, where it checks if the given credentials are valid or not
+// it is used by the login route in the userRouter.
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({email});
     if(!user) throw new Error('Not a registered email!');
@@ -106,8 +108,8 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user;
 }
 
-//Hashing the password before saving it to the DB.
-//This middleware runs whenever the the .save() method is used.
+// Hashing the password before saving it to the DB.
+// This middleware runs whenever the the .save() method is used.
 userSchema.pre('save', async function (next) {
     const user = this;
 
@@ -118,15 +120,15 @@ userSchema.pre('save', async function (next) {
     next();
 })
 
-//Delete the user's task when the user himself is deleted.
-//This method is used whenever .remove() is used.
+// Delete the user's tasks when the user himself is deleted.
+// This method is used whenever .remove() is used.
 userSchema.pre('remove', async function(next) {
     const user = this;
     const owner = user._id;
-    await Task.deleteMany({owner})
-    next()
+    await Task.deleteMany({owner});
+    next();
 })
 
-const User = mongoose.model('User', userSchema) 
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

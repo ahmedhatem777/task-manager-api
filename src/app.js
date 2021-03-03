@@ -6,6 +6,7 @@ require('./db/mongoose');
 
 const app = express();
 
+// Specifying cors options (origin)
 const corsOptions = {
     credentials: true,
     origin: 'https://tt.ahmed-hatem.com'

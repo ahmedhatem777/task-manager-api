@@ -3,9 +3,9 @@ const router = new express.Router();
 const Task = require('../models/task');
 const auth = require('../middleware/auth');
 
-//Creating a new task
+// Creating a new task
 router.post('/tasks', auth, async (req, res) => {
-    //Using es6 spread to take all the properties of the req.body and adding them to the task object.
+    // Using es6 spread to take all the properties of the req.body and adding them to the task object.
     const task = new Task({
         ...req.body,
         owner: req.user._id
@@ -21,7 +21,7 @@ router.post('/tasks', auth, async (req, res) => {
     }
 })
 
-//Getting all tasks
+// Getting all tasks
 router.get('/tasks', auth, async (req, res) => {
     const match = {};
     const sort = {};
@@ -58,7 +58,7 @@ router.get('/tasks', auth, async (req, res) => {
     }
 })
 
-//Getting a task
+// Getting a task
 router.get('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id;
 
@@ -74,7 +74,7 @@ router.get('/tasks/:id', auth, async (req, res) => {
     }
 })
 
-//Updating a task
+// Updating a task
 router.patch('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id;
     const owner = req.user._id;
@@ -98,7 +98,7 @@ router.patch('/tasks/:id', auth, async (req, res) => {
     }
 })
 
-//Deleting a task
+// Deleting a task
 router.delete('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id;
     const owner = req.user._id;
