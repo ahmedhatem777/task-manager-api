@@ -9,7 +9,7 @@ const app = express();
 // Specifying cors options (origin)
 const corsOptions = {
     credentials: true,
-    origin: 'https://tt.ahmed-hatem.com'
+    origin: 'https://romantic-einstein-d62959.netlify.app'
 }
 
 app.use(cors(corsOptions)); 
