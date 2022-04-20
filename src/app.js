@@ -9,7 +9,7 @@ const app = express();
 // Specifying cors options (origin)
 const corsOptions = {
     credentials: true,
-    origin: 'https://romantic-einstein-d62959.netlify.app'
+    origin: 'https://tt-front-end.vercel.app'
 }
 
 app.use(cors(corsOptions)); 
