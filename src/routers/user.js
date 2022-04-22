@@ -35,7 +35,7 @@ router.post('/users', async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
             httpOnly: true,
             path: "/",
-            sameSite: "lax",
+            sameSite: "strict",
             // Set true for https only
             // secure: true
         }))
@@ -66,7 +66,7 @@ router.post('/users/login', async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', token, {
             httpOnly: true,
             path: "/",
-            sameSite: "lax",
+            sameSite: "strict",
             // Set true for "https" only
             // secure: true
         }));
@@ -101,6 +101,7 @@ router.post('/users/logout', auth, async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', 'buhbye', {
             httpOnly: true,
             path: "/",
+            sameSite: "strict",
             maxAge: 1 // 1 second
         }))
 
@@ -120,6 +121,7 @@ router.post('/users/logoutAll', auth, async (req, res) => {
         res.setHeader('Set-Cookie', cookie.serialize('jot', 'buhbye', {
             httpOnly: true,
             path: "/",
+            sameSite: "strict",
             maxAge: 1 // 1 second
         }))
 
