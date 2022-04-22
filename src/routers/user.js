@@ -36,8 +36,7 @@ router.post('/users', async (req, res) => {
             httpOnly: true,
             path: "/",
             sameSite: "strict",
-            // Set true for https only
-            // secure: true
+            secure: true
         }))
         res.status(201);
         res.send({user});
@@ -67,8 +66,7 @@ router.post('/users/login', async (req, res) => {
             httpOnly: true,
             path: "/",
             sameSite: "strict",
-            // Set true for "https" only
-            // secure: true
+            secure: true
         }));
         res.send({user});
     }
@@ -102,6 +100,7 @@ router.post('/users/logout', auth, async (req, res) => {
             httpOnly: true,
             path: "/",
             sameSite: "strict",
+            secure: true,
             maxAge: 1 // 1 second
         }))
 
